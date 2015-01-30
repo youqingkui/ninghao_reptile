@@ -116,8 +116,7 @@ ninghao::downVideo = (cb) ->
 
   .on 'end', () ->
     console.log "#{self.info.name} 下载成功"
-    console.log "................................."
-    console.log("")
+    console.log ".................................\n\n\n\n"
     cb()
 
   .pipe(write)

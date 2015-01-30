@@ -15,6 +15,7 @@
     this.url = url;
     this.href = [];
     this.info = {};
+    this.courseName = 'ninghao.net';
   };
 
   ninghao.prototype.reqOp = function(url) {
@@ -41,6 +42,12 @@
         return console.log("获取课程页面失败，检查网络");
       }
       $ = cheerio.load(body);
+      if ($(".course-info h1").length === 0) {
+        console.log("没有找到课程名，使用默认课程名 " + self.courseName);
+      } else {
+        self.courseName = $(".course-info h1").text();
+        console.log("找到课程名 " + self.courseName);
+      }
       link = $("tr > td a");
       linkLen = link.length;
       console.log("查找到得课程列表： " + linkLen);
@@ -56,6 +63,9 @@
         return false;
       }
       console.log("### 获取课程列表 end ###");
+      if (!fs.existsSync(self.courseName)) {
+        fs.mkdirSync(self.courseName);
+      }
       return self.doTask();
     });
   };
@@ -111,7 +121,7 @@
     var op, self, write;
     self = this;
     op = self.reqOp(self.info.url);
-    write = fs.createWriteStream(self.info.name + ".mp4");
+    write = fs.createWriteStream(self.courseName + '/' + self.info.name + ".mp4");
     return request.get(op).on('response', function(res) {
       console.log(".................................");
       console.log("" + self.info.name + "  " + self.info.url);
@@ -123,7 +133,7 @@
       console.log("" + self.info.name + "  " + self.info.url + " down error: " + err);
       console.log("下载视频出错，准备3s后重试。。。");
       return setTimeout(function() {
-        return self.downVideo(url, cb);
+        return self.downVideo(cb);
       }, 3000);
     }).on('end', function() {
       console.log("" + self.info.name + " 下载成功");
@@ -134,7 +144,7 @@
 
   console.log(process.env.NingHao);
 
-  down = new ninghao(process.env.NingHao, 'http://ninghao.net/course/1974');
+  down = new ninghao(process.env.NingHao, 'http://ninghao.net/course/1510');
 
   down.getUrl();
 

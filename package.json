@@ -1,4 +1,9 @@
 {
   "name": "application-name",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "dependencies": {
+    "async": "^0.9.0",
+    "cheerio": "^0.18.0",
+    "request": "^2.51.0"
+  }
 }

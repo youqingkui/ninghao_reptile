@@ -80,6 +80,8 @@ ninghao::getDownInfo = (url, cb) ->
     $ = cheerio.load(body)
     findElent = $("#sidebar section div.box")
 #    self.info.url  = findElent.eq(0).find("a").attr("href")
+    unless $('script:contains("这不是秘密哦")').length
+      return console.log "没有获取到下载的信息，可能是没有登录cookie"
     self.info.url  = $('script:contains("这不是秘密哦")').text().trim().split("\n")[2].split('"')[1]
     self.info.name = findElent.eq(0).find("strong").find("a").text()
     if not self.info.url or not self.info.name
@@ -114,6 +116,8 @@ ninghao::downVideo = (cb) ->
 
   .on 'end', () ->
     console.log "#{self.info.name} 下载成功"
+    console.log "................................."
+    console.log("")
     cb()
 
   .pipe(write)
@@ -141,5 +145,6 @@ ninghao::downVideo = (cb) ->
 
 
 
-test = new ninghao('123', 'http://ninghao.net/course/2034')
-test.getUrl()
+console.log(process.env.NingHao)
+down = new ninghao(process.env.NingHao, 'http://ninghao.net/course/2034')
+down.getUrl()

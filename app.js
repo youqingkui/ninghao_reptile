@@ -16,7 +16,7 @@
       url: url,
       headers: {
         'User-Agent': 'request',
-        'Cookie': 'SESSeb41eba184e0681dc06c8ef121645e44=ugctmqZ4DmVSPR88qaztetX3TwwE7HNU-kzPz62byhY'
+        'Cookie': ''
       }
     };
     return options;

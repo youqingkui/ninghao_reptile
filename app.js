@@ -98,6 +98,7 @@
       }
       self.info.url = $('script:contains("这不是秘密哦")').text().trim().split("\n")[2].split('"')[1];
       self.info.name = findElent.eq(0).find("strong").find("a").text();
+      self.info.name = self.info.name.replace(/\//g, 'or');
       if (!self.info.url || !self.info.name) {
         return console.log("没有发现下载的课程名和URL");
       }
@@ -133,7 +134,7 @@
 
   console.log(process.env.NingHao);
 
-  down = new ninghao(process.env.NingHao, 'http://ninghao.net/course/2034');
+  down = new ninghao(process.env.NingHao, 'http://ninghao.net/course/1974');
 
   down.getUrl();
 

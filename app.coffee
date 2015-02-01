@@ -3,7 +3,7 @@ async   = require("async")
 fs      = require("fs")
 cheerio = require("cheerio")
 
-ninghao = (@cookie, @url) ->
+ninghao = (@cookie, @urlArr) ->
 
   @href = []
   @info = {}
@@ -20,13 +20,28 @@ ninghao::reqOp = (url) ->
 
   return options
 
+ninghao::parseUrlArr = () ->
+  ### 解析课程链接数组 ###
+  self = @
+  async.eachSeries self.urlArr, (item, callback) ->
+    console.log item
+    self.getUrl(item, callback)
 
-ninghao::getUrl = () ->
+  ,(eachErr) ->
+    if eachErr
+      return console.log "出现错误啦！"
+
+    console.log " ## all do ##"
+
+
+
+ninghao::getUrl = (url, cb) ->
   ### 获取课程列表 ###
   self = @
-  op = self.reqOp(self.url)
+  op = self.reqOp(url)
   request.get op, (err, res, body) ->
     if err
+      console.log err
       return console.log "获取课程页面失败，检查网络"
 
     $ = cheerio.load(body)
@@ -54,11 +69,11 @@ ninghao::getUrl = () ->
     console.log "### 获取课程列表 end ###"
     unless fs.existsSync(self.courseName)
       fs.mkdirSync(self.courseName)
-    self.doTask()
+    self.doTask(cb)
 
 
 
-ninghao::doTask = () ->
+ninghao::doTask = (cb) ->
   ### 去获取课程详情页面的下载链接信息 ###
   self = @
   async.eachSeries self.href, (item, callback) ->
@@ -70,7 +85,10 @@ ninghao::doTask = () ->
       console.log 'oo)oo(oo'
       return console.log eachErr
 
-    return console.log "all do"
+    console.log "完成了#{self.courseName}，开始下一批"
+
+    self.href = []
+    cb()
 
 
 ninghao::getDownInfo = (url, cb) ->
@@ -114,6 +132,7 @@ ninghao::downVideo = (cb) ->
     console.log "#{self.info.name}  #{self.info.url}"
     console.log(res.statusCode)
     if res.statusCode is 200
+#      console.log res
       console.log '连接下载视频成功'
 
   .on "error", (err) ->
@@ -151,5 +170,11 @@ ninghao::downVideo = (cb) ->
 
 
 console.log(process.env.NingHao)
-down = new ninghao(process.env.NingHao, 'http://ninghao.net/course/1510')
-down.getUrl()
+loginCookie = process.env.NingHao
+downUrlArr = [
+  'http://ninghao.net/course/1584',
+  'http://ninghao.net/course/1479',
+  'http://ninghao.net/course/1444'
+]
+down = new ninghao(loginCookie, downUrlArr)
+down.parseUrlArr()

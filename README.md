@@ -10,10 +10,18 @@
 
 - `app.js` 代码中修改, ninghao 结束两个参数获取到得cookie， 以及下载的课程URL：
 	```js
-	// cookie 
 	console.log(process.env.NingHao)
-	down = new ninghao(process.env.NingHao, 'http://ninghao.net/course/2034')
-	down.getUrl()
+	// 登入cookie
+    loginCookie = process.env.NingHao
+    // 要下载的课程url数组
+    downUrlArr = [
+      'http://ninghao.net/course/1553',
+      'http://ninghao.net/course/1584',
+      'http://ninghao.net/course/1479',
+      'http://ninghao.net/course/1444'
+    ]
+    down = new ninghao(loginCookie, downUrlArr)
+    down.parseUrlArr()
 	```
 
 - `node app` 
